@@ -2,12 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from urllib import request
-import json
+import json,argparse
 #import random,time
 
-file = open("cfrank.txt","r")
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--file')
+parser.add_argument('--output')
+
+args = parser.parse_args()
+
+if args.file:
+    file = open(args.file,"r")
+else:
+    file = open("cfrank.txt","r")
 
 result = []
+
 for line in file:
     line = line.replace("\n","")
     if line[0] == '#':
@@ -30,10 +41,13 @@ result = sorted(result,key=lambda x : x[2])
 
 print('---')
 
-out = open("result.txt","w")
+if args.output:
+    out = open(args.output,"w")
+else:
+    out = open("result.txt","w")
 
 for val in result:
     print(val[2],val[0])
-    out.write(str(val[2]))
+    out.write(str(val[2])+" ")
     out.write(str(val[0])+"\n")
 
