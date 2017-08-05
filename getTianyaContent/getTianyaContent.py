@@ -32,7 +32,7 @@ def parse_html(html):
     soup = BeautifulSoup(html,'lxml')
     print(soup.title.text)
     res = soup.find_all('div',attrs={'class','bbs-content'})
-    with open('result.md','a') as file:
+    with open('result.txt','a') as file:
         for val in res:
             img = val.find('img')
             if img:
