@@ -2,8 +2,9 @@
 #! -*- coding:utf-8 -*-
 
 from bs4 import BeautifulSoup
-from multiprocessing import Pool
+from multiprocessing import Pool #多进程 一个进程能有多个线程
 import requests,re,time
+
 
 session = requests.Session()
 session.headers.update({'User-Agent':'Mozilla/5.0 (Linux; U; Android 4.4.4; Nexus 5 Build/KTU84P) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'})
