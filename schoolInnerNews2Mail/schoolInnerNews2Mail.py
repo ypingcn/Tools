@@ -7,38 +7,25 @@
 建议写 shell 脚本启动并在运行前 export LC_ALL=zh_CN.UTF-8 
 '''
 
+from conf import *
+from sys import argv
 from bs4 import BeautifulSoup
-import requests,re,yagmail,time
+import requests,re,yagmail,json,time
+
 
 ROOT_URL = 'http://news.gdut.edu.cn/'
 
 #HttpFox
 
-LOGIN_DATA = {}
-LOGIN_DATA['__VIEWSTATE'] = '/wEPDwUKLTQwOTA4NzE2NmQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgEFI2N0bDAwJENvbnRlbnRQbGFjZUhvbGRlcjEkQ2hlY2tCb3gxBufpEJuDDaf6eTj0A4Cn2Erf8u98KcGrQqATTB3mEaQ='
-LOGIN_DATA['__EVENTVALIDATION'] = '/wEWBQKb37HjDwLgvLy9BQKi4MPwCQL+zqO2BAKA4sljg4IvzC7ksG01o7aN0RZUOKEC4lV0bTeXI4zrbaQsj0c='
-
-# 联系校内人员获取账号密码，此处的账号密码无效
-LOGIN_DATA['ctl00$ContentPlaceHolder1$userEmail'] = 'account'
-LOGIN_DATA['ctl00$ContentPlaceHolder1$userPassWord'] = 'password'
-
-LOGIN_DATA['ctl00$ContentPlaceHolder1$CheckBox1'] = 'on'
-LOGIN_DATA['ctl00$ContentPlaceHolder1$Button1'] = '%E7%99%BB%E5%BD%95'
-
 session = requests.Session()
 
-#发送者邮箱
-SEND_MAIL_USER = 'mail@mail.com'
-#发送者邮箱对应的密码
-SEND_MAIL_PWD = 'password'
-#腾讯企业邮箱
-SEND_MAIL_HOST = 'smtp.exmail.qq.com'
-#发送端口
-SEND_MAIL_PORT = 465
-#邮件正文标题
-SEND_MAIL_SUBJECT = time.strftime("%Y-%m-%d",time.localtime()) + '@今日校内通知'
-#接收邮件的人
-SEND_TO_LIST = ['mail@mail.com']
+def weather_api():
+    weather_request_url = WEATHER_API_URL+'city='+WEATHER_API_CITY+'&&key='+WEATHER_API_KEY
+    weather_request = requests.get(weather_request_url)
+    weather_data = []
+    if weather_request.status_code == 200:
+        weather_data = json.loads(weather_request.content.decode(encoding='utf-8'))
+    return weather_data
 
 
 def html_login():
@@ -51,7 +38,6 @@ def html_login():
 
 
 def attachment_and_excerpt(url,attachment,excerpt):
-
     if not url:
         print('empty url')
         return
@@ -110,15 +96,36 @@ def html_parse(html,mail):
 
 
 if __name__ == '__main__':
+    weather_data = weather_api()
+    print('get weather infomation finish')
     index_content = html_login()
+    print('login finish')
     mail_content = []
 
+    if weather_data:
+        mail_content.append('<p>今天又是崭新的一天。:-) '
+                            +'当前天气：'+weather_data['HeWeather5'][0]['now']['cond']['txt']+'，'
+                            +'气温：'+weather_data['HeWeather5'][0]['now']['tmp']+'℃，'
+                            +'体感温度：'+weather_data['HeWeather5'][0]['now']['fl']+'℃，'
+                            +'</p>')
+        mail_content.append('<p>'+'未来几个小时内的天气为：'+'</p>')
+        for i in weather_data['HeWeather5'][0]['hourly_forecast']:
+            mail_content.append('<p>'+i['date']+'：'+i['cond']['txt']+'</p>')
     if index_content:
+        mail_content.append('－－　以下是今日的校内通知内容：　－－')
         html_parse(index_content,mail_content)
+        print('parse html finish')
 
     if mail_content:
         client = yagmail.SMTP(user=SEND_MAIL_USER, password=SEND_MAIL_PWD, host=SEND_MAIL_HOST, port=SEND_MAIL_PORT)
-        for addr in SEND_TO_LIST:
-            client.send(addr,subject=SEND_MAIL_SUBJECT,contents =mail_content)
-            time.sleep(2)
+        if len(argv) == 2 and '-t' in argv:
+            for addr in SEND_TO_LIST_TEST:
+                print('[test user] - sending : ' + addr)
+                client.send(addr, subject=SEND_MAIL_SUBJECT, contents=mail_content)
+                time.sleep(1)
+        else:
+            for addr in SEND_TO_LIST:
+                print('sending : '+addr)
+                client.send(addr,subject=SEND_MAIL_SUBJECT,contents =mail_content)
+                time.sleep(1)
 
