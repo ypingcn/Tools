@@ -36,3 +36,7 @@ WEATHER_API_URL = 'https://free-api.heweather.com/v5/weather?'
 WEATHER_API_CITY = 'guangzhou'
 #免费版key，一天4000次调用，注册后可用
 WEATHER_API_KEY = 'key'
+
+ANNOUNCEMENT = '修复附件名乱码问题（https://github.com/ypingcn/Tools/tree/dev/schoolInnerNews2Mail）'
+VERSION = '2017.09.16'
+
