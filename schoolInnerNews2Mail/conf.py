@@ -37,6 +37,6 @@ WEATHER_API_CITY = 'guangzhou'
 #免费版key，一天4000次调用，注册后可用
 WEATHER_API_KEY = 'key'
 
-ANNOUNCEMENT = '修复附件名乱码问题（https://github.com/ypingcn/Tools/tree/dev/schoolInnerNews2Mail）'
-VERSION = '2017.09.16'
+ANNOUNCEMENT = '重构，使用模板引擎取代字符串拼接生成邮件内容（https://github.com/ypingcn/Tools/tree/dev/schoolInnerNews2Mail）'
+VERSION = '2017.09.26'
 
