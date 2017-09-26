@@ -1,0 +1,7 @@
+<p>天气：{{ now.cond.txt }}，气温：{{ now.tmp }}℃，体感温度：{{ now.fl }}摄氏度</p>
+<br>未来几个小时内的天气预报为：
+{%- for hour in forecast %}
+<br>{{ hour.date }} : {{ hour.cond.txt }}
+{%- endfor %}
+
+
