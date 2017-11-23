@@ -66,10 +66,12 @@ class Weibo(object):
     def download(self):
         page = 1
 
+        # 筛选原创微博
         if self.type == 'origin':
-            traverse_url = self.url + '?profile_ftype=1&is_ori=1'
+            traverse_url = self.url + '?from=myfollow_all&profile_ftype=1&is_ori=1'
+        # 全部微博
         elif self.type == 'all':
-            traverse_url = self.url
+            traverse_url = self.url + '?from=myfollow_all&is_all=1'
         else:
             print('unsupported type: '+self.type)
 
