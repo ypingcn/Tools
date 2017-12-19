@@ -1,0 +1,17 @@
+{%- if articles %}
+<p> 今日的新闻通知如下 </p>
+    <ul>
+    {%- for article in articles %}
+    <li><a href='{{article.url}}'><font color="red"> {{ article.title }} </font></a>
+        {{ article.author }} - {{ article.date }}
+        {{ article.excerpt }}
+        {%- for link in article.attachment %}
+        <a href='{{link.attach_url}}'>{{ link.attach_name }}</a>
+        {%- endfor %}
+    </li>
+    {%- endfor %}
+</ul>
+{%- else %}
+<p> 暂无未读的新闻通知 </p>
+{%- endif %}
+
