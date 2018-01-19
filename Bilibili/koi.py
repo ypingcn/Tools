@@ -3,7 +3,7 @@
 
 import os
 import re
-import itertools
+import functools
 import sqlite3
 from bs4 import BeautifulSoup
 import requests
@@ -157,7 +157,8 @@ class Bilibili:
         if not val:
             return 0
         num = val.split(":")
-        return int(list(itertools.accumulate(num, lambda a, b: int(a) * 60 + int(b)))[1])
+        #return int(list(itertools.accumulate(num, lambda a, b: int(a) * 60 + int(b)))[1])
+        return functools.reduce(lambda x,y : int(x)*60+int(y) , num)
 
     @staticmethod
     def __num_format(val):
